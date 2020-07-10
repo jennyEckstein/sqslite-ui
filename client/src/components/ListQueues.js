@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import XMLParser from "react-xml-parser";
 
+// import Queue from "./Queue";
+
 class ListQueues extends Component {
   state = {
     response: "",
@@ -43,6 +45,7 @@ class ListQueues extends Component {
   };
 
   render() {
+    const queueNames = this.state.responseToPost.map((name) => <h1>{name}</h1>);
     return (
       <div className="App">
         <p>{this.state.response}</p>
@@ -54,7 +57,13 @@ class ListQueues extends Component {
 
           <button type="submit">List Queues</button>
         </form>
-        <p>{this.state.responseToPost}</p>
+        {/* <p> */}
+        <div>{queueNames}</div>
+        {/* {this.state.responseToPost.forEach((name) => {
+          console.log("PASSING name:", name);
+          <ListChildren name />;
+        })} */}
+        {/* </p> */}
       </div>
     );
   }
