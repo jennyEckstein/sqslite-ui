@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import XMLParser from "react-xml-parser";
 
 class ListQueues extends Component {
   state = {
     response: "",
     post: "",
-    responseToPost: "",
+    responseToPost: [],
   };
 
   componentDidMount() {
@@ -16,6 +17,7 @@ class ListQueues extends Component {
   callApi = async () => {
     const response = await fetch("/");
     const body = await response.json();
+    console.log("LIST QUEUES:", body);
     if (response.status !== 200) throw Error(body.message);
 
     return body;
@@ -25,11 +27,19 @@ class ListQueues extends Component {
     e.preventDefault();
     const response = await fetch("/", {
       method: "POST",
-      body: JSON.stringify({ Action: this.state.post }),
+      body: JSON.stringify({ Action: "ListQueues" }),
     });
+    console.log("ListQueues response:", response);
     const body = await response.text();
-
-    this.setState({ responseToPost: body });
+    console.log("list queues: ", body);
+    const xml = new XMLParser().parseFromString(body);
+    console.log("xml", xml);
+    console.log(xml.getElementsByTagName("ListQueuesResult"));
+    const res = xml.getElementsByTagName("ListQueuesResult");
+    console.log("children", JSON.stringify(res[0].children));
+    const allQeueus = res[0].children.map((item) => item.value);
+    this.setState({ responseToPost: allQeueus });
+    console.log("updated state:", this.state.responseToPost);
   };
 
   render() {
@@ -39,14 +49,10 @@ class ListQueues extends Component {
 
         <form onSubmit={this.handleSubmit}>
           <p>
-            <strong>Post to Server:</strong>
+            <strong>List Queues:</strong>
           </p>
-          <input
-            type="text"
-            value={this.state.post}
-            onChange={(e) => this.setState({ post: e.target.value })}
-          />
-          <button type="submit">Submit</button>
+
+          <button type="submit">List Queues</button>
         </form>
         <p>{this.state.responseToPost}</p>
       </div>
